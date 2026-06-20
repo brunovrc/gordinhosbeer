@@ -1,0 +1,16 @@
+﻿# Sistema interno
+MazyOS/
+site/
+.claude/
+
+# Imagens brutas na raiz (organizadas em img/)
+/*.jpg
+/*.jpeg
+/*.png
+/*.webp
+/*.avif
+/*.svg
+/*.mp4
+
+# Arquivos com extensões malformadas
+/*_v=*

@@ -1,0 +1,1645 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Gordinho's Beer — Disk Cerveja, Conveniência & Tabacaria em Maringá. Peça pelo site, receba em até 45 minutos.">
+  <title>Gordinho's Beer — Disk Cerveja & Tabacaria</title>
+  <link rel="icon" type="image/png" href="Logotipos e Favicon/Favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    img { display: block; max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    input, select, textarea { font-family: inherit; }
+
+    :root {
+      /* Azul naval mais fundo e rico — match do terceiro print */
+      --navy:   #0E2040;
+      --yellow: #FFD600;
+      --red:    #E63329;
+      --green:  #25D366;
+      --white:  #ffffff;
+      --bg:     #F7F8FA;
+      --border: #E4E7EC;
+      --text:   #111827;
+      --muted:  #6B7280;
+      --r:      20px;
+      --r-sm:   12px;
+      --r-pill: 999px;
+      --hh:     80px;
+      --shadow: 0 1px 4px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.06);
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════
+       LOGO FLUTUANTE
+    ══════════════════════════════ */
+    .logo-float {
+      position: fixed;
+      top: 8px;
+      left: 20px;
+      z-index: 500;
+      transition: transform .32s cubic-bezier(.4,0,.2,1), opacity .32s ease;
+    }
+    .logo-float.nav-hidden {
+      transform: translateX(-140%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .logo-float a { display: block; line-height: 0; }
+    .logo-float img {
+      /* Dimensões explícitas para evitar distorção do SVG */
+      height: 196px;
+      width:  196px;
+      display: block;
+      transition: transform .22s;
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,.35));
+    }
+    .logo-float img:hover { transform: scale(1.05); }
+
+    /* ══════════════════════════════
+       HEADER
+    ══════════════════════════════ */
+    .hdr {
+      position: sticky; top: 0; z-index: 100;
+      height: var(--hh);
+      background: var(--navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      transition: transform .32s cubic-bezier(.4,0,.2,1);
+    }
+    .hdr.nav-hidden { transform: translateY(-100%); }
+    .hdr-in {
+      max-width: 1320px; margin: 0 auto; height: 100%;
+      display: grid;
+      grid-template-columns: 220px 1fr auto;
+      align-items: center;
+      padding: 0 24px;
+      gap: 0;
+    }
+
+    /* ══ ANIMATED TABS NAV ══ */
+    .hdr-nav {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      list-style: none;
+      position: relative;
+      height: 100%;
+    }
+
+    /* Magic hover background — moves between tabs on hover */
+    .nav-hover-bg {
+      position: absolute;
+      background: rgba(255,255,255,.09);
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: left .18s cubic-bezier(.4,0,.2,1),
+                  width .18s cubic-bezier(.4,0,.2,1),
+                  top .18s cubic-bezier(.4,0,.2,1),
+                  height .18s cubic-bezier(.4,0,.2,1),
+                  opacity .14s ease;
+      z-index: 0;
+    }
+
+    .nav-line { display: none; }
+
+    .nav-menu { position: relative; z-index: 1; }
+
+    /* Tab trigger */
+    .nav-trigger {
+      display: flex; align-items: center; gap: 5px;
+      padding: 8px 16px;
+      font-size: 13.5px; font-weight: 500; font-family: inherit;
+      color: rgba(255,255,255,.6);
+      background: none; border: none;
+      cursor: pointer; user-select: none; outline: none;
+      white-space: nowrap; text-decoration: none;
+      transition: color .18s;
+      position: relative; z-index: 1;
+    }
+    .nav-trigger:hover,
+    .nav-trigger[aria-expanded="true"],
+    .nav-trigger.active { color: var(--yellow); }
+    .nav-trigger-wpp { color: rgba(255,255,255,.6); }
+    .nav-trigger-wpp:hover { color: #4ade80; }
+
+    /* Dropdown arrow */
+    .nav-trigger .nav-arrow {
+      font-size: 10px; opacity: .7;
+      transition: transform .2s ease, opacity .18s;
+    }
+    .nav-trigger:hover .nav-arrow,
+    .nav-trigger[aria-expanded="true"] .nav-arrow { opacity: 1; }
+    .nav-trigger[aria-expanded="true"] .nav-arrow { transform: rotate(180deg); }
+
+    /* Dropdown content */
+    .nav-content {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: -4px;
+      min-width: 192px;
+      background: #0c1d38;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 6px;
+      padding: 4px;
+      box-shadow: 0 4px 6px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+      z-index: 300;
+      opacity: 0;
+      transform: scaleY(.96) translateY(-6px);
+      transform-origin: top center;
+      pointer-events: none;
+      transition: opacity .15s ease, transform .15s ease;
+    }
+    .nav-content.open {
+      opacity: 1;
+      transform: scaleY(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Item do dropdown */
+    .nav-dd-item {
+      display: flex; align-items: center; gap: 8px;
+      border-radius: 4px;
+      padding: 6px 8px;
+      font-size: 13px; font-weight: 500;
+      color: rgba(255,255,255,.78);
+      cursor: default; user-select: none; text-decoration: none;
+      transition: background .1s, color .1s;
+    }
+    .nav-dd-item:hover { background: rgba(255,214,0,.12); color: var(--yellow); }
+    .nav-dd-item i { font-size: 13px; width: 16px; text-align: center; flex-shrink: 0; }
+    .nav-dd-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      color: rgba(255,255,255,.35); padding: 6px 8px 4px;
+      text-transform: uppercase;
+    }
+    .nav-dd-sep {
+      height: 1px; background: rgba(255,255,255,.09);
+      margin: 4px 0;
+    }
+
+    .hdr-right { display: flex; align-items: center; gap: 10px; }
+
+    .hdr-location {
+      display: none; align-items: center; gap: 7px;
+      color: rgba(255,255,255,.75); font-size: 12px; line-height: 1.3;
+      border-right: 1px solid rgba(255,255,255,.15); padding-right: 14px; cursor: pointer;
+    }
+    .hdr-location i { color: var(--yellow); font-size: 14px; flex-shrink: 0; }
+    .hdr-location strong { color: white; display: block; font-size: 11px; }
+
+    .btn-cart-hdr {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 8px; border: none;
+      background: var(--yellow); color: var(--navy); font-size: 20px;
+      transition: background .15s, transform .15s;
+    }
+    .btn-cart-hdr:hover { background: #f0c800; transform: translateY(-1px); }
+    .btn-cart-txt { display: none; }
+    @media (min-width: 768px) {
+      .btn-cart-hdr {
+        width: auto; height: auto; border-radius: var(--r-pill);
+        padding: 10px 20px; gap: 7px; font-size: 13.5px; font-weight: 700;
+      }
+      .btn-cart-hdr i { font-size: 17px; }
+      .btn-cart-txt { display: inline; }
+    }
+    .cart-badge {
+      position: absolute; top: -5px; right: -5px;
+      background: var(--red); color: white;
+      min-width: 18px; height: 18px; border-radius: var(--r-pill);
+      font-size: 10px; font-weight: 800;
+      display: none; align-items: center; justify-content: center; padding: 0 4px;
+    }
+    .cart-badge.on { display: flex; }
+
+    /* Logo spacer — holds grid col 1 on desktop, hidden on mobile */
+    .hdr-logo-gap { display: block; }
+
+    /* Mobile burger — shadcn outline button style */
+    .btn-burger {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; flex-shrink: 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.28);
+      background: transparent; color: white;
+      font-size: 20px;
+      transition: background .15s, border-color .15s, color .15s;
+    }
+    .btn-burger:hover { background: rgba(255,255,255,.1); border-color: rgba(255,255,255,.5); }
+
+    @media (min-width: 768px) {
+      .hdr-nav { display: flex; }
+      .hdr-location { display: flex; }
+      .btn-burger { display: none; }
+    }
+
+    /* ══════════════════════════════
+       MOBILE NAV
+    ══════════════════════════════ */
+    .mob-nav {
+      position: fixed; inset: 0; top: var(--hh);
+      background: var(--navy); z-index: 99;
+      padding: 24px 20px; display: flex; flex-direction: column; gap: 2px;
+      transform: translateX(-100%); transition: transform .28s ease;
+    }
+    .mob-nav.open { transform: none; }
+    .mob-nav a {
+      color: rgba(255,255,255,.85); font-size: 18px; font-weight: 600;
+      padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .mob-nav a i { font-size: 13px; color: rgba(255,255,255,.35); }
+
+    /* ══════════════════════════════
+       HERO — full-bleed, sem cortes, sem barras amarelas
+       A imagem define a altura da seção naturalmente (height: auto).
+       O overlay de texto é position:absolute sobre a imagem.
+    ══════════════════════════════ */
+    .hero {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      line-height: 0;
+      overflow: hidden;
+      position: relative;
+      /* sem background: a imagem cobre tudo */
+    }
+
+    /* Imagem em bloco — determina a altura da hero naturalmente */
+    .hero-bg-img {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Texto sobreposto cobrindo toda a hero */
+    .hero-over {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      line-height: normal;
+      padding: 36px 22px 30px;
+    }
+
+    .hero-h1 {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .hero-h1 em {
+      display: block;
+      color: var(--red);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 22px;
+      opacity: .85;
+    }
+
+    .hero-info { display: flex; flex-wrap: wrap; gap: 8px; }
+    .hi-badge {
+      display: flex; align-items: center; gap: 9px;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 9px 16px;
+      border: 1px solid rgba(255,255,255,.55);
+    }
+    .hi-badge i { font-size: 16px; color: var(--navy); flex-shrink: 0; }
+    .hi-badge-txt strong {
+      display: block; font-size: 11.5px; font-weight: 700;
+      color: var(--navy); line-height: 1.2;
+    }
+    .hi-badge-txt span { font-size: 10.5px; color: #4B5563; }
+
+    /* Desktop: texto na metade esquerda (área amarela), centralizado verticalmente */
+    @media (min-width: 768px) {
+      .hero-bucket-mobile { display: none; }
+      .hero-over {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 32px 56% 32px 52px;
+      }
+      .hero-h1 { font-size: 52px; }
+    }
+
+    @media (min-width: 1100px) {
+      .hero-over { padding-left: 64px; padding-right: 58%; }
+      .hero-h1 { font-size: 62px; }
+    }
+
+    @media (min-width: 1400px) {
+      .hero-h1 { font-size: 70px; }
+    }
+
+    /* Mobile: esconde a imagem panorâmica, usa bg amarelo + balde separado */
+    @media (max-width: 767px) {
+      .hdr-in {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-left: 216px;
+        padding-right: 16px;
+      }
+      .hdr-logo-gap { display: none; }
+      .hero {
+        background: var(--yellow);
+        line-height: normal;
+      }
+      .hero-bg-img { display: none; }
+      .hero-over {
+        position: relative;
+        padding: 108px 22px 16px;
+      }
+      .hero-bucket-mobile {
+        display: block;
+        width: 88%;
+        max-width: 340px;
+        margin: 0 auto 24px;
+        position: relative;
+        z-index: 2;
+      }
+    }
+
+    /* ══════════════════════════════
+       SEARCH
+    ══════════════════════════════ */
+    .search-wrap { max-width: 1320px; margin: 0 auto; padding: 18px 20px 0; }
+    .search-box { position: relative; }
+    .search-box i {
+      position: absolute; left: 16px; top: 50%;
+      transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none;
+    }
+    .search-input {
+      width: 100%; padding: 13px 16px 13px 44px;
+      background: white; border: 1.5px solid var(--border);
+      border-radius: var(--r-pill); font-size: 14px; color: var(--text);
+      outline: none; transition: border-color .15s;
+    }
+    .search-input::placeholder { color: var(--muted); }
+    .search-input:focus { border-color: var(--navy); }
+
+    /* ══════════════════════════════
+       CATEGORIES
+    ══════════════════════════════ */
+    .cats-bar {
+      background: white; border-bottom: 1.5px solid var(--border);
+    }
+    .cats-in { max-width: 1320px; margin: 0 auto; padding: 0 20px; }
+    .cats-scroll {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 12px 0; scrollbar-width: none;
+    }
+    .cats-scroll::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: var(--r-pill); white-space: nowrap;
+      font-size: 13px; font-weight: 600;
+      border: 1.5px solid var(--border); color: var(--muted); background: white;
+      transition: all .15s;
+    }
+    .cat-pill i { font-size: 15px; flex-shrink: 0; transition: color .15s; }
+    .cat-pill:hover { border-color: var(--navy); color: var(--navy); }
+    .cat-pill:hover i { color: var(--navy) !important; }
+    .cat-pill.active { background: var(--yellow); border-color: var(--yellow); color: var(--navy); }
+    .cat-pill.active i { color: var(--navy) !important; }
+    .cat-pill.promo { background: var(--red); border-color: var(--red); color: white; }
+    .cat-pill.promo i { color: white !important; }
+    .cat-pill.promo:hover { background: #c42b22; border-color: #c42b22; }
+
+    /* ══════════════════════════════
+       PRODUCTS
+    ══════════════════════════════ */
+    .prods-wrap { max-width: 1320px; margin: 0 auto; padding: 22px 20px 140px; }
+    .sec-head {
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;
+    }
+    .sec-title { font-size: 20px; font-weight: 800; color: var(--navy); }
+    .ver-todos {
+      font-size: 13px; font-weight: 600; color: var(--navy);
+      display: flex; align-items: center; gap: 4px; opacity: .6; transition: opacity .15s;
+    }
+    .ver-todos:hover { opacity: 1; }
+    .grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+    @media (min-width: 540px)  { .grid { grid-template-columns: repeat(3,1fr); gap: 14px; } }
+    @media (min-width: 900px)  { .grid { grid-template-columns: repeat(4,1fr); gap: 16px; } }
+    @media (min-width: 1100px) { .grid { grid-template-columns: repeat(5,1fr); } }
+
+    /* ══════════════════════════════
+       PRODUCT CARD
+    ══════════════════════════════ */
+    .card {
+      background: white; border-radius: var(--r);
+      overflow: hidden; border: 1.5px solid var(--border);
+      box-shadow: var(--shadow); transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.1); }
+    .card-img {
+      aspect-ratio: 1/1; position: relative;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .card-img::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.11); }
+    /* Real photo support — overlay and label hidden while image is present */
+    .card-img-real::after { display: none; }
+    .card-img-real .img-label { display: none; }
+    .card-img img {
+      position: absolute; inset: 0; z-index: 1;
+      width: 100%; height: 100%;
+      object-fit: contain; padding: 8px;
+    }
+    .img-label {
+      position: relative; z-index: 1;
+      font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em;
+      color: rgba(255,255,255,.93); text-align: center; padding: 0 10px; line-height: 1.3;
+      text-shadow: 0 2px 6px rgba(0,0,0,.4);
+    }
+    .disc-badge {
+      position: absolute; top: 9px; left: 9px; z-index: 2;
+      background: var(--red); color: white;
+      font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: var(--r-pill);
+    }
+    .card-body { padding: 11px 13px 13px; }
+    .card-name { font-size: 13px; font-weight: 700; line-height: 1.3; margin-bottom: 2px; }
+    .card-vol  { font-size: 11px; color: var(--muted); margin-bottom: 10px; }
+    .card-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 4px; }
+
+    /* Tipografia de preço */
+    .price-old { font-size: 10.5px; color: var(--muted); text-decoration: line-through; font-weight: 500; margin-bottom: 1px; }
+    .price-main { display: flex; align-items: flex-start; gap: 1px; line-height: 1; color: var(--navy); }
+    .price-main sup { font-size: 9.5px; font-weight: 700; color: var(--muted); margin-top: 4px; }
+    .price-main b   { font-size: 22px; font-weight: 900; }
+    .price-main small { font-size: 13px; font-weight: 800; margin-top: 8px; }
+
+    .add-btn {
+      width: 36px; height: 36px; border-radius: var(--r-sm);
+      background: var(--yellow); color: var(--navy);
+      font-size: 22px; font-weight: 900; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s, color .15s, transform .1s;
+    }
+    .add-btn:hover { background: var(--navy); color: var(--yellow); }
+    .add-btn:active { transform: scale(.9); }
+
+    /* Qty controls (inline on card when item in cart) */
+    .qty-ctrl {
+      display: flex; align-items: center; gap: 6px;
+      background: var(--navy); border-radius: var(--r-sm);
+      padding: 4px 6px; flex-shrink: 0;
+    }
+    .qty-ctrl button {
+      width: 24px; height: 24px; border-radius: 4px;
+      background: rgba(255,255,255,.12); color: white;
+      font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .1s;
+    }
+    .qty-ctrl button:hover { background: rgba(255,255,255,.22); }
+    .qty-ctrl span { font-size: 14px; font-weight: 800; color: white; min-width: 16px; text-align: center; }
+
+    /* Pack shortcut buttons for cervejas */
+    .pack-row {
+      display: flex; gap: 5px; margin-top: 7px; flex-wrap: wrap;
+    }
+    .pack-btn {
+      padding: 3px 9px; border-radius: 99px;
+      border: 1.5px solid var(--border); font-size: 11px; font-weight: 700;
+      color: var(--navy); background: white;
+      transition: border-color .12s, background .12s, color .12s;
+    }
+    .pack-btn:hover { border-color: var(--yellow); background: var(--yellow); }
+
+    /* ══════════════════════════════
+       INFO BAR
+    ══════════════════════════════ */
+    .info-bar { background: white; border-top: 1.5px solid var(--border); border-bottom: 1.5px solid var(--border); }
+    .info-in {
+      max-width: 1320px; margin: 0 auto; padding: 20px;
+      display: grid; grid-template-columns: repeat(2,1fr); gap: 16px;
+    }
+    @media (min-width: 640px) { .info-in { grid-template-columns: repeat(4,1fr); } }
+    .info-item { display: flex; align-items: center; gap: 10px; }
+    .info-icon { font-size: 20px; color: var(--navy); flex-shrink: 0; }
+    .info-txt strong { display: block; font-size: 12.5px; font-weight: 700; color: var(--navy); }
+    .info-txt span   { font-size: 11px; color: var(--muted); }
+    .age-block {
+      background: var(--navy); border-radius: var(--r-sm);
+      padding: 10px 13px; display: flex; align-items: center; gap: 10px;
+    }
+    .age-num { font-size: 26px; font-weight: 900; color: var(--yellow); line-height: 1; }
+    .age-txt { font-size: 11px; color: rgba(255,255,255,.75); line-height: 1.35; }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    /* ══════════════════════════════
+       SOBRE NÓS
+    ══════════════════════════════ */
+    .sobre { background: white; border-top: 1.5px solid var(--border); padding: 56px 20px; }
+    .sobre-in {
+      max-width: 1320px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr; gap: 40px;
+    }
+    @media (min-width: 768px) {
+      .sobre-in { grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+    }
+    .sobre-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: var(--yellow); color: var(--navy);
+      font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: var(--r-pill); margin-bottom: 14px;
+    }
+    .sobre-h2 { font-size: 28px; font-weight: 900; color: var(--navy); line-height: 1.15; margin-bottom: 10px; }
+    @media (min-width: 768px) { .sobre-h2 { font-size: 34px; } }
+    .sobre-desc { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+
+    .horas-title { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; color: var(--navy); margin-bottom: 10px; }
+    .hora-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+    }
+    .hora-row:last-child { border-bottom: none; }
+    .hora-dia { color: var(--text); font-weight: 500; }
+    .hora-dia.hoje { font-weight: 800; color: var(--navy); }
+    .hora-val { font-weight: 600; color: var(--navy); }
+    .hora-fechado { color: var(--red); font-weight: 700; }
+
+    .addr-blk { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+    .addr-txt {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13.5px; color: var(--text); line-height: 1.5;
+    }
+    .addr-txt i { color: var(--navy); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+    .map-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .map-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px; border-radius: var(--r-pill);
+      font-size: 13px; font-weight: 700;
+      border: 1.5px solid var(--border); color: var(--navy); background: white;
+      transition: all .15s;
+    }
+    .map-btn:hover { border-color: var(--navy); background: var(--navy); color: white; }
+    .map-btn i { font-size: 15px; }
+
+    .mapa-wrap {
+      border-radius: var(--r); overflow: hidden;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+    .mapa-wrap iframe { display: block; width: 100%; height: 360px; border: none; }
+    .mapa-overlay-link {
+      position: absolute; inset: 0; z-index: 2;
+    }
+    @media (min-width: 768px) { .mapa-wrap iframe { height: 440px; } }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer { background: var(--navy); padding: 56px 20px 0; }
+    .foot-in {
+      max-width: 1320px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr; gap: 40px;
+      padding-bottom: 48px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    @media (min-width: 600px) { .foot-in { grid-template-columns: 1fr 1fr; } }
+    @media (min-width: 900px) { .foot-in { grid-template-columns: 2fr 1fr 1fr; gap: 60px; } }
+
+    .foot-brand img {
+      height: 80px; width: auto; margin-bottom: 16px;
+      filter: drop-shadow(0 2px 10px rgba(0,0,0,.45));
+    }
+    .foot-brand p {
+      color: rgba(255,255,255,.5); font-size: 13px; line-height: 1.65;
+      margin-bottom: 22px; max-width: 290px;
+    }
+    .foot-social { display: flex; gap: 10px; }
+    .social-btn {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 19px; color: white;
+      transition: transform .15s, filter .15s;
+    }
+    .social-btn:hover { transform: translateY(-3px); filter: brightness(1.1); }
+    .social-btn.insta { background: linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+    .social-btn.fb    { background: #1877F2; }
+    .social-btn.wpp   { background: #25D366; }
+
+    .foot-col { display: flex; flex-direction: column; gap: 11px; }
+    .foot-col-title {
+      font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--yellow); margin-bottom: 5px;
+    }
+    .foot-col a, .foot-col span {
+      color: rgba(255,255,255,.58); font-size: 13px;
+      display: flex; align-items: center; gap: 9px; transition: color .15s; line-height: 1.4;
+    }
+    .foot-col a:hover { color: white; }
+    .foot-col i { font-size: 15px; flex-shrink: 0; color: rgba(255,255,255,.4); }
+
+    .foot-bottom {
+      max-width: 1320px; margin: 0 auto;
+      padding: 22px 0 30px;
+      display: flex; flex-direction: column; gap: 5px; text-align: center;
+    }
+    .foot-bottom p { color: rgba(255,255,255,.25); font-size: 11.5px; }
+
+    /* ══════════════════════════════
+       OVERLAY
+    ══════════════════════════════ */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.5);
+      z-index: 200; opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+
+    /* ══════════════════════════════
+       CART DRAWER
+    ══════════════════════════════ */
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0;
+      width: 100%; max-width: 420px;
+      background: white; z-index: 201;
+      display: flex; flex-direction: column;
+      transform: translateX(100%); transition: transform .28s ease;
+      box-shadow: -4px 0 32px rgba(0,0,0,.15);
+    }
+    .drawer.open { transform: none; }
+    .drawer-hdr {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px; border-bottom: 1.5px solid var(--border);
+    }
+    .drawer-title { font-size: 17px; font-weight: 800; color: var(--navy); display: flex; align-items: center; gap: 9px; }
+    .btn-close { font-size: 20px; color: var(--muted); padding: 4px; transition: color .15s; }
+    .btn-close:hover { color: var(--text); }
+    .drawer-body { flex: 1; overflow-y: auto; padding: 12px 16px; }
+    .empty-cart { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-cart i { font-size: 48px; color: var(--border); margin-bottom: 14px; }
+    .empty-cart p { font-size: 15px; font-weight: 600; color: var(--text); }
+    .empty-cart span { font-size: 13px; }
+    .ci { display: flex; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+    .ci-img {
+      width: 64px; height: 64px; border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; overflow: hidden; position: relative;
+    }
+    .ci-img::after { content:''; position:absolute; inset:0; background:rgba(0,0,0,.1); }
+    .ci-img span {
+      position: relative; z-index: 1; font-size: 10px; font-weight: 800;
+      text-transform: uppercase; color: rgba(255,255,255,.9); text-align: center;
+      line-height: 1.2; text-shadow: 0 1px 4px rgba(0,0,0,.4);
+    }
+    .ci-body { flex: 1; }
+    .ci-name { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+    .ci-vol  { font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+    .qty-row { display: flex; align-items: center; gap: 10px; }
+    .qb {
+      width: 28px; height: 28px; border-radius: 50%;
+      border: 1.5px solid var(--border); font-size: 16px; font-weight: 700;
+      color: var(--navy); display: flex; align-items: center; justify-content: center;
+      transition: all .15s;
+    }
+    .qb:hover { border-color: var(--navy); background: var(--navy); color: white; }
+    .qty-val { font-size: 15px; font-weight: 800; min-width: 22px; text-align: center; }
+    .ci-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+    .ci-price { font-size: 14px; font-weight: 800; color: var(--navy); }
+    .ci-del { font-size: 14px; color: var(--border); transition: color .15s; }
+    .ci-del:hover { color: var(--red); }
+    .drawer-foot { padding: 16px 20px; border-top: 1.5px solid var(--border); background: white; }
+    .sum-row { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--muted); margin-bottom: 8px; }
+    .sum-row.total {
+      font-size: 18px; font-weight: 900; color: var(--navy);
+      border-top: 1.5px solid var(--border); padding-top: 12px; margin-top: 4px; margin-bottom: 0;
+    }
+    .sum-row.total span:last-child { color: var(--red); }
+    .min-warn {
+      background: #FFF8E1; border: 1px solid #FFE082;
+      border-radius: var(--r-sm); padding: 10px 13px;
+      font-size: 12px; color: #B45309;
+      display: flex; align-items: center; gap: 8px; margin-top: 12px;
+    }
+    .btn-wpp {
+      width: 100%; margin-top: 14px;
+      background: var(--green); color: white;
+      padding: 15px; border-radius: var(--r);
+      font-size: 16px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      transition: background .15s;
+    }
+    .btn-wpp:hover { background: #1da851; }
+    .btn-wpp i { font-size: 19px; }
+    .secure-note {
+      text-align: center; font-size: 11px; color: var(--muted);
+      margin-top: 9px; display: flex; align-items: center; justify-content: center; gap: 4px;
+    }
+
+    /* ══════════════════════════════
+       FAB CART — sempre visível
+    ══════════════════════════════ */
+    .fab-cart {
+      position: fixed; bottom: 24px; right: 24px; z-index: 80;
+      width: 56px; height: 56px; border-radius: 50%;
+      background: var(--yellow); color: var(--navy);
+      font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,.28);
+      transition: transform .15s, box-shadow .15s;
+    }
+    .fab-cart:hover { transform: scale(1.1); box-shadow: 0 6px 28px rgba(0,0,0,.38); }
+    .fab-badge {
+      position: absolute; top: -3px; right: -3px;
+      background: var(--red); color: white;
+      min-width: 20px; height: 20px; border-radius: 99px;
+      font-size: 11px; font-weight: 800;
+      display: none; align-items: center; justify-content: center; padding: 0 5px;
+    }
+    .fab-badge.on { display: flex; }
+
+    /* ══════════════════════════════
+       DESTILADOS — subcategoria
+    ══════════════════════════════ */
+    .subcat-header {
+      grid-column: 1 / -1;
+      font-size: 15px; font-weight: 800; color: var(--navy);
+      padding: 8px 0 8px; margin-top: 12px;
+      border-bottom: 2px solid var(--yellow);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .subcat-header:first-child { margin-top: 0; }
+
+    /* ══════════════════════════════
+       CHECKOUT MODAL
+    ══════════════════════════════ */
+    .modal-bd {
+      position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,.5);
+      display: flex; align-items: flex-end; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .25s;
+    }
+    .modal-bd.open { opacity: 1; pointer-events: auto; }
+    .modal-box {
+      background: white; width: 100%; max-width: 480px;
+      border-radius: 24px 24px 0 0; padding: 24px 20px 36px;
+      max-height: 90vh; overflow-y: auto;
+      transform: translateY(100%); transition: transform .3s ease;
+    }
+    .modal-bd.open .modal-box { transform: none; }
+    @media (min-width: 640px) {
+      .modal-bd { align-items: center; }
+      .modal-box { border-radius: 24px; transform: scale(.95); }
+      .modal-bd.open .modal-box { transform: scale(1); }
+    }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 20px; }
+    .fgroup { margin-bottom: 14px; }
+    .fgroup label { display: block; font-size: 11.5px; font-weight: 700; color: var(--navy); margin-bottom: 5px; text-transform: uppercase; letter-spacing: .04em; }
+    .fgroup input, .fgroup select, .fgroup textarea {
+      width: 100%; padding: 12px 14px;
+      border: 1.5px solid var(--border); border-radius: var(--r-sm);
+      font-size: 14px; color: var(--text); outline: none; transition: border-color .15s;
+    }
+    .fgroup input:focus, .fgroup select:focus, .fgroup textarea:focus { border-color: var(--navy); }
+    .fgroup textarea { resize: vertical; min-height: 68px; }
+    .radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+    .radio-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 16px; border-radius: var(--r-pill);
+      border: 1.5px solid var(--border); cursor: pointer;
+      font-size: 13.5px; font-weight: 600; transition: all .15s;
+    }
+    .radio-btn input { display: none; }
+    .radio-btn.sel { background: var(--navy); border-color: var(--navy); color: white; }
+    .btn-enviar {
+      width: 100%; margin-top: 8px;
+      background: var(--green); color: white;
+      padding: 15px; border-radius: var(--r);
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 9px;
+      transition: background .15s;
+    }
+    .btn-enviar:hover { background: #1da851; }
+    .btn-enviar i { font-size: 18px; }
+    .btn-back { width: 100%; padding: 11px; text-align: center; color: var(--muted); font-size: 13.5px; margin-top: 6px; transition: color .15s; }
+    .btn-back:hover { color: var(--text); }
+
+    /* Order preview step */
+    .order-preview { display: none; }
+    .order-preview.show { display: block; }
+    .order-preview-box {
+      background: #f4f4f4; border-radius: 10px;
+      padding: 14px 16px; margin: 12px 0 16px;
+      font-size: 13px; line-height: 1.75;
+      white-space: pre-wrap; word-break: break-word;
+      color: #111; max-height: 280px; overflow-y: auto;
+      border: 1px solid #ddd;
+    }
+    .btn-copy {
+      width: 100%; padding: 13px; border-radius: var(--r-pill);
+      background: var(--navy); color: white;
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .15s;
+    }
+    .btn-copy:hover { background: #0e1f38; }
+    .btn-copy.copied { background: #1a7a3e; }
+    .btn-wpp-open {
+      width: 100%; padding: 13px; border-radius: var(--r-pill);
+      background: var(--green); color: white;
+      font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 8px; transition: background .15s;
+    }
+    .btn-wpp-open:hover { background: #1da851; }
+    .preview-hint {
+      font-size: 12px; color: var(--muted); text-align: center;
+      margin-top: 10px; line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Logo flutuante: atravessa nav + hero, border-radius:50% elimina fundo branco do PNG -->
+<div class="logo-float">
+  <a href="#">
+    <img src="img/logotipo svg sem fundo.svg" alt="Gordinho's Beer">
+  </a>
+</div>
+
+<!-- Mobile nav -->
+<nav class="mob-nav" id="mobNav">
+  <a href="#" onclick="closeMob()">Início <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="closeMob()">Produtos <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="closeMob()">Promoções <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="closeMob()">Como funciona <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="closeMob()">Sobre nós <i class="ti ti-chevron-right"></i></a>
+  <a href="https://wa.me/5544999735347" target="_blank">WhatsApp <i class="ti ti-brand-whatsapp"></i></a>
+</nav>
+
+<!-- Header (sem logo — logo está no .logo-float fixo) -->
+<header class="hdr">
+  <div class="hdr-in">
+    <span class="hdr-logo-gap"></span>
+    <ul class="hdr-nav" id="hdrNav">
+      <div class="nav-hover-bg" id="navHoverBg"></div>
+      <div class="nav-line" id="navLine"></div>
+
+      <li class="nav-menu">
+        <a href="#" class="nav-trigger active" data-nav-tab>Início</a>
+      </li>
+
+      <li class="nav-menu">
+        <button class="nav-trigger" data-menu="dd-cardapio" data-nav-tab aria-expanded="false">
+          Cardápio <i class="ti ti-chevron-down nav-arrow"></i>
+        </button>
+        <div class="nav-content" id="dd-cardapio">
+          <div class="nav-dd-label">Bebidas</div>
+          <a href="#" class="nav-dd-item" onclick="navToCat('cervejas');return false"><i class="ti ti-beer"></i>Cervejas</a>
+          <a href="#" class="nav-dd-item" onclick="navToCat('refrigerantes');return false"><i class="ti ti-bottle"></i>Refrigerantes</a>
+          <a href="#" class="nav-dd-item" onclick="navToCat('energeticos');return false"><i class="ti ti-bolt"></i>Energéticos</a>
+          <a href="#" class="nav-dd-item" onclick="navToCat('gelo');return false"><i class="ti ti-snowflake"></i>Gelo</a>
+          <div class="nav-dd-sep"></div>
+          <div class="nav-dd-label">Snacks</div>
+          <a href="#" class="nav-dd-item" onclick="navToCat('snacks');return false"><i class="ti ti-cookie"></i>Snacks</a>
+          <div class="nav-dd-sep"></div>
+          <div class="nav-dd-label">Destilados</div>
+          <a href="#" class="nav-dd-item" onclick="navToCat('destilados');return false"><i class="ti ti-glass-full"></i>Todos os destilados</a>
+          <div class="nav-dd-sep"></div>
+          <a href="#" class="nav-dd-item" onclick="navToCat('promocoes');return false"><i class="ti ti-tag"></i>Promoções</a>
+        </div>
+      </li>
+
+      <li class="nav-menu">
+        <button class="nav-trigger" data-menu="dd-sobre" data-nav-tab aria-expanded="false">
+          Sobre nós <i class="ti ti-chevron-down nav-arrow"></i>
+        </button>
+        <div class="nav-content" id="dd-sobre">
+          <div class="nav-dd-label">Gordinho's Beer</div>
+          <a href="#sobre" class="nav-dd-item"><i class="ti ti-clock"></i>Ter–Dom · 09h–01h (seg fechado)</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=Av.+Jo%C3%A3o+Pereira,+3924,+Jardim+Montreal,+Maring%C3%A1,+PR,+87083-230" target="_blank" class="nav-dd-item"><i class="ti ti-map-pin"></i>Jardim Montreal, Maringá – PR</a>
+          <div class="nav-dd-sep"></div>
+          <div class="nav-dd-label">Pagamento</div>
+          <a href="#" class="nav-dd-item"><i class="ti ti-cash"></i>Dinheiro</a>
+          <a href="#" class="nav-dd-item"><i class="ti ti-qrcode"></i>PIX</a>
+          <a href="#" class="nav-dd-item"><i class="ti ti-credit-card"></i>Cartão / PicPay</a>
+        </div>
+      </li>
+
+      <li class="nav-menu">
+        <a href="https://wa.me/5544999735347" target="_blank" class="nav-trigger nav-trigger-wpp" data-nav-tab>
+          <i class="ti ti-brand-whatsapp"></i> WhatsApp
+        </a>
+      </li>
+
+    </ul>
+
+    <div class="hdr-right">
+      <div class="hdr-location">
+        <i class="ti ti-map-pin"></i>
+        <div>
+          <strong>Entregar em:</strong>
+          Maringá — PR
+        </div>
+      </div>
+      <button class="btn-cart-hdr" onclick="openCart()" title="Meu carrinho">
+        <i class="ti ti-shopping-bag"></i>
+        <span class="btn-cart-txt">Meu carrinho</span>
+        <span class="cart-badge" id="cartBadge">0</span>
+      </button>
+      <button class="btn-burger" onclick="toggleMob()">
+        <i class="ti ti-menu-2" id="burgerIcon"></i>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Hero: imagem de fundo completa + texto à esquerda -->
+<section class="hero">
+  <img
+    class="hero-bg-img"
+    src="img/imagem da hero-cropped.png"
+    alt="Gordinho's Beer — Disk Cerveja e Conveniência"
+  >
+
+  <div class="hero-over">
+    <h1 class="hero-h1">
+      Seu disk cerveja<br>
+      <em>e conveniência.</em>
+    </h1>
+    <p class="hero-sub">Peça fácil, receba rápido e aproveite com quem importa!</p>
+    <div class="hero-info">
+      <div class="hi-badge">
+        <i class="ti ti-clock"></i>
+        <div class="hi-badge-txt">
+          <strong>Entrega rápida</strong>
+          <span>Em até 45 min</span>
+        </div>
+      </div>
+      <div class="hi-badge">
+        <i class="ti ti-shopping-bag"></i>
+        <div class="hi-badge-txt">
+          <strong>Pedido mínimo</strong>
+          <span>R$ 20,00</span>
+        </div>
+      </div>
+      <div class="hi-badge">
+        <i class="ti ti-shield-check"></i>
+        <div class="hi-badge-txt">
+          <strong>Compra segura</strong>
+          <span>Seus dados protegidos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile: balde abaixo do texto (desktop está na imagem de fundo) -->
+  <img
+    class="hero-bucket-mobile"
+    src="img/foto para fazer parte da hero.png"
+    alt="Balde de cervejas Gordinho's Beer"
+  >
+</section>
+
+<!-- Search -->
+<div class="search-wrap">
+  <div class="search-box">
+    <i class="ti ti-search"></i>
+    <input class="search-input" id="searchInput" type="text" placeholder="Buscar produto..." oninput="onSearch()">
+  </div>
+</div>
+
+<!-- Categories -->
+<div class="cats-bar">
+  <div class="cats-in">
+    <div class="cats-scroll">
+      <button class="cat-pill active" data-cat="populares" onclick="setCat(this)"><i class="ti ti-flame" style="color:#f97316"></i> Mais pedidos</button>
+      <button class="cat-pill" data-cat="cervejas" onclick="setCat(this)"><i class="ti ti-beer" style="color:#d97706"></i> Cervejas</button>
+      <button class="cat-pill" data-cat="refrigerantes" onclick="setCat(this)"><i class="ti ti-bottle" style="color:#3b82f6"></i> Refrigerantes</button>
+      <button class="cat-pill" data-cat="energeticos" onclick="setCat(this)"><i class="ti ti-bolt" style="color:#eab308"></i> Energéticos</button>
+      <button class="cat-pill" data-cat="gelo" onclick="setCat(this)"><i class="ti ti-snowflake" style="color:#60a5fa"></i> Gelo</button>
+      <button class="cat-pill" data-cat="snacks" onclick="setCat(this)"><i class="ti ti-cookie" style="color:#ea580c"></i> Snacks</button>
+      <button class="cat-pill" data-cat="destilados" onclick="setCat(this)"><i class="ti ti-glass-full" style="color:#7c3aed"></i> Destilados</button>
+      <button class="cat-pill promo" data-cat="promocoes" onclick="setCat(this)"><i class="ti ti-discount-2"></i> Promoções</button>
+    </div>
+  </div>
+</div>
+
+<!-- Products -->
+<div class="prods-wrap">
+  <div class="sec-head">
+    <h2 class="sec-title" id="secTitle">Mais pedidos</h2>
+    <a href="#" class="ver-todos">Ver todos <i class="ti ti-chevron-right" style="font-size:11px"></i></a>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- Info bar -->
+<div class="info-bar">
+  <div class="info-in">
+    <div class="info-item">
+      <i class="ti ti-motorbike info-icon"></i>
+      <div class="info-txt"><strong>Entrega rápida</strong><span>Em até 45 minutos</span></div>
+    </div>
+    <div class="info-item">
+      <i class="ti ti-clock info-icon"></i>
+      <div class="info-txt"><strong>Atendimento</strong><span>Ter–Dom — fecha seg-feira</span></div>
+    </div>
+    <div class="info-item">
+      <i class="ti ti-credit-card info-icon"></i>
+      <div class="info-txt"><strong>Pagamento</strong><span>Dinheiro, PIX, Cartão, PicPay</span></div>
+    </div>
+    <div class="age-block">
+      <div class="age-num">18+</div>
+      <div class="age-txt">Beba com responsabilidade. Proibida a venda para menores.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Sobre nós -->
+<section class="sobre" id="sobre">
+  <div class="sobre-in">
+    <!-- Info -->
+    <div>
+      <div class="sobre-eyebrow"><i class="ti ti-map-pin"></i> Maringá — PR</div>
+      <h2 class="sobre-h2">Gordinho's Beer</h2>
+      <p class="sobre-desc">Disk Cerveja, Conveniência & Tabacaria. Atendemos com entrega rápida em até 45 minutos direto na sua porta, com os melhores preços da região.</p>
+
+      <div class="horas-title">Horário de funcionamento</div>
+      <div class="hora-row"><span class="hora-dia">Segunda-feira</span><span class="hora-fechado">Fechado</span></div>
+      <div class="hora-row"><span class="hora-dia">Terça a quinta</span><span class="hora-val">13:00 – 23:00</span></div>
+      <div class="hora-row"><span class="hora-dia">Sexta-feira</span><span class="hora-val">13:00 – 01:00</span></div>
+      <div class="hora-row"><span class="hora-dia">Sábado</span><span class="hora-val">10:00 – 01:00</span></div>
+      <div class="hora-row"><span class="hora-dia">Domingo</span><span class="hora-val">09:00 – 20:00</span></div>
+
+      <div class="addr-blk">
+        <div class="addr-txt">
+          <i class="ti ti-map-pin"></i>
+          Av. João Pereira, 3924 — Jardim Montreal, Maringá – PR, 87083-230
+        </div>
+        <div class="map-btns">
+          <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Av.+Jo%C3%A3o+Pereira,+3924,+Jardim+Montreal,+Maring%C3%A1,+PR,+87083-230" target="_blank">
+            <i class="ti ti-brand-google-maps"></i> Google Maps
+          </a>
+          <a class="map-btn" href="https://waze.com/ul?q=Av.+Jo%C3%A3o+Pereira%2C+3924%2C+Jardim+Montreal%2C+Maring%C3%A1+PR&navigate=yes" target="_blank">
+            <i class="ti ti-navigation"></i> Waze
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapa -->
+    <div class="mapa-wrap">
+      <a class="mapa-overlay-link" href="https://www.google.com/maps/search/?api=1&query=Av.+Jo%C3%A3o+Pereira,+3924,+Jardim+Montreal,+Maring%C3%A1,+PR,+87083-230" target="_blank" aria-label="Abrir no Google Maps"></a>
+      <iframe
+        src="https://maps.google.com/maps?q=Av.+Jo%C3%A3o+Pereira,+3924,+Jardim+Montreal,+Maring%C3%A1,+PR,+87083-230&output=embed&z=16"
+        loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+        title="Localização Gordinho's Beer">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="foot-in">
+
+    <!-- Marca -->
+    <div class="foot-brand">
+      <img src="img/logotipo svg sem fundo.svg" alt="Gordinho's Beer">
+      <p>Disk Cerveja, Conveniência & Tabacaria em Maringá, PR. Entrega rápida, todos os dias da semana (exceto segunda).</p>
+      <div class="foot-social">
+        <a class="social-btn insta" href="https://instagram.com/gordinhosbeer" target="_blank" aria-label="Instagram">
+          <i class="ti ti-brand-instagram"></i>
+        </a>
+        <a class="social-btn fb" href="https://web.facebook.com/p/Gordinhos-Beer-100054629971013" target="_blank" aria-label="Facebook">
+          <i class="ti ti-brand-facebook"></i>
+        </a>
+        <a class="social-btn wpp" href="https://wa.me/5544999735347" target="_blank" aria-label="WhatsApp">
+          <i class="ti ti-brand-whatsapp"></i>
+        </a>
+      </div>
+    </div>
+
+    <!-- Menu -->
+    <div class="foot-col">
+      <div class="foot-col-title">Menu</div>
+      <a href="#">Início</a>
+      <a href="#" onclick="navToCat('cervejas');return false">Cervejas</a>
+      <a href="#" onclick="navToCat('refrigerantes');return false">Refrigerantes</a>
+      <a href="#" onclick="navToCat('energeticos');return false">Energéticos</a>
+      <a href="#" onclick="navToCat('promocoes');return false">Promoções</a>
+      <a href="#sobre">Sobre nós</a>
+    </div>
+
+    <!-- Contato -->
+    <div class="foot-col">
+      <div class="foot-col-title">Contato</div>
+      <a href="https://wa.me/5544999735347" target="_blank"><i class="ti ti-brand-whatsapp"></i>(44) 99973-5347</a>
+      <a href="https://instagram.com/gordinhosbeer" target="_blank"><i class="ti ti-brand-instagram"></i>@gordinhosbeer</a>
+      <a href="https://web.facebook.com/p/Gordinhos-Beer-100054629971013" target="_blank"><i class="ti ti-brand-facebook"></i>Gordinho's Beer</a>
+      <a href="https://www.google.com/maps/search/?api=1&query=Av.+Jo%C3%A3o+Pereira,+3924,+Jardim+Montreal,+Maring%C3%A1,+PR,+87083-230" target="_blank"><i class="ti ti-map-pin"></i>Jardim Montreal, Maringá — PR</a>
+      <span><i class="ti ti-clock"></i>Ter–Dom · 09h–01h</span>
+    </div>
+
+  </div>
+
+  <div class="foot-bottom">
+    <p>© 2025 Gordinho's Beer — Disk Cerveja & Tabacaria. Todos os direitos reservados.</p>
+    <p>A venda e o consumo de bebidas alcoólicas são proibidos para menores de 18 anos.</p>
+  </div>
+</footer>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+
+<!-- Cart drawer -->
+<div class="drawer" id="drawer">
+  <div class="drawer-hdr">
+    <div class="drawer-title"><i class="ti ti-shopping-bag" style="color:var(--navy)"></i>Meu carrinho</div>
+    <button class="btn-close" onclick="closeCart()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-foot" id="drawerFoot" style="display:none">
+    <div class="sum-row"><span>Subtotal</span><span id="dSubtotal"></span></div>
+    <div class="sum-row"><span>Taxa de entrega</span><span>R$ 5,00</span></div>
+    <div class="sum-row total"><span>Total</span><span id="dTotal"></span></div>
+    <div class="min-warn" id="minWarn" style="display:none">
+      <i class="ti ti-alert-triangle"></i>Pedido mínimo de R$ 20,00 (sem taxa)
+    </div>
+    <button class="btn-wpp" onclick="openCheckout()">
+      <i class="ti ti-brand-whatsapp"></i>Finalizar pedido no WhatsApp
+    </button>
+    <div class="secure-note"><i class="ti ti-lock" style="font-size:11px"></i>Seus dados estão protegidos</div>
+  </div>
+</div>
+
+<!-- FAB carrinho — sempre visível -->
+<button class="fab-cart" onclick="openCart()" aria-label="Abrir carrinho">
+  <i class="ti ti-shopping-bag"></i>
+  <span class="fab-badge" id="fabBadge">0</span>
+</button>
+
+<!-- Checkout modal -->
+<div class="modal-bd" id="checkoutModal">
+  <div class="modal-box">
+    <div class="modal-title">Dados para entrega</div>
+    <form id="checkoutForm" onsubmit="sendOrder(event)">
+      <div class="fgroup">
+        <label>Tipo de entrega</label>
+        <div class="radio-group">
+          <label class="radio-btn sel" id="rbD"><input type="radio" name="tipo" value="delivery" checked onchange="toggleTipo()">🛵 Delivery</label>
+          <label class="radio-btn" id="rbR"><input type="radio" name="tipo" value="retirada" onchange="toggleTipo()">🏪 Retirada</label>
+        </div>
+      </div>
+      <div class="fgroup">
+        <label>Seu nome *</label>
+        <input type="text" id="fNome" placeholder="Como devemos te chamar?" required>
+      </div>
+      <div class="fgroup">
+        <label>Telefone *</label>
+        <input type="tel" id="fTel" placeholder="(44) 99999-9999" required>
+      </div>
+      <div class="fgroup" id="addrRow">
+        <label>Endereço de entrega *</label>
+        <input type="text" id="fAddr" placeholder="Rua, número, bairro">
+      </div>
+      <div class="fgroup">
+        <label>Forma de pagamento *</label>
+        <select id="fPag" onchange="toggleTroco()" required>
+          <option value="">Selecione...</option>
+          <option>PIX</option>
+          <option>Cartão de crédito</option>
+          <option>Cartão de débito</option>
+          <option>Dinheiro</option>
+          <option>PicPay</option>
+        </select>
+      </div>
+      <div class="fgroup" id="trocoRow" style="display:none">
+        <label>Troco para</label>
+        <input type="text" id="fTroco" placeholder="Ex: R$ 50,00">
+      </div>
+      <div class="fgroup">
+        <label>Observações</label>
+        <textarea id="fObs" placeholder="Ex: entregar no portão, campainha não funciona..."></textarea>
+      </div>
+      <button type="submit" class="btn-enviar"><i class="ti ti-brand-whatsapp"></i>Enviar pedido no WhatsApp</button>
+      <button type="button" class="btn-back" onclick="closeCheckout()">← Voltar ao carrinho</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  // Build Open Food Facts image URL from 13-digit barcode
+  function offImg(bc) {
+    const b = String(bc);
+    if (b.length === 13) return 'https://images.openfoodfacts.org/images/products/' + b.slice(0,3) + '/' + b.slice(3,6) + '/' + b.slice(6,9) + '/' + b.slice(9) + '/front_pt.400.jpg';
+    return 'https://images.openfoodfacts.org/images/products/' + b + '/front_pt.400.jpg';
+  }
+
+  const P = [
+    // Cervejas
+    {id:1,  name:'Budweiser Long Neck', vol:'330ml',      price:6.50,  cat:'cervejas',     disc:12, pop:true, g:'linear-gradient(135deg,#B8730A,#F0C832)', lbl:'Budweiser',    img:'img/budweiser.jpg'},
+    {id:2,  name:'Stella Artois Lata',  vol:'350ml',      price:5.90,  cat:'cervejas',     pop:true,          g:'linear-gradient(135deg,#1a3870,#2e60c0)', lbl:'Stella Artois',img:'img/stella%20cerveja.png'},
+    {id:3,  name:'Skol Pilsen Lata',    vol:'350ml',      price:4.50,  cat:'cervejas',     pop:true,          g:'linear-gradient(135deg,#C07808,#F0B830)', lbl:'Skol',         img:'img/skol.webp'},
+    {id:4,  name:'Brahma Duplo Malte',  vol:'350ml',      price:5.00,  cat:'cervejas',     pop:true,          g:'linear-gradient(135deg,#881818,#C83030)', lbl:'Brahma',       img:'img/brahma%20duplo%20malte.jpg'},
+    {id:5,  name:'Heineken Long Neck',  vol:'330ml',      price:8.00,  cat:'cervejas',                        g:'linear-gradient(135deg,#145414,#2a9c2a)', lbl:'Heineken',     img:'img/heineken.png'},
+    {id:6,  name:'Corona Extra',        vol:'330ml',      price:9.00,  cat:'cervejas',                        g:'linear-gradient(135deg,#9c7a00,#e8b800)', lbl:'Corona',       img:'img/corona%20extra.webp'},
+    // Refrigerantes — 2L
+    {id:7,  name:'Coca-Cola',           vol:'2L',         price:9.90,  cat:'refrigerantes',pop:true,          g:'linear-gradient(135deg,#6e0000,#B80000)', lbl:'Coca-Cola',    img:'img/coca%20cola%202%20litros%20nova.webp'},
+    {id:8,  name:'Guaraná Antarctica',  vol:'2L',         price:7.50,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#145414,#22902a)', lbl:'Guaraná',      img:'img/guarana%20antartica%202%20litros.jpg'},
+    {id:9,  name:'Pepsi Black',         vol:'2L',         price:8.00,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#08083a,#101080)', lbl:'Pepsi',        img:'img/pepsi%20black%202%20litros.webp'},
+    {id:10, name:'Fanta Laranja',       vol:'2L',         price:8.00,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#A04800,#E06820)', lbl:'Fanta',        img:'img/fanta%202%20litros.webp'},
+    // Refrigerantes — 600ml
+    {id:21, name:'Coca-Cola',           vol:'600ml',      price:5.90,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#6e0000,#B80000)', lbl:'Coca-Cola',    img:'img/coca%20cola%202%20litros%20nova.webp'},
+    {id:22, name:'Guaraná Antarctica',  vol:'600ml',      price:4.50,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#145414,#22902a)', lbl:'Guaraná',      img:'img/guarana%20antartica%202%20litros.jpg'},
+    {id:23, name:'Pepsi Black',         vol:'600ml',      price:5.00,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#08083a,#101080)', lbl:'Pepsi',        img:'img/pepsi%20black%202%20litros.webp'},
+    {id:24, name:'Fanta Laranja',       vol:'600ml',      price:5.00,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#A04800,#E06820)', lbl:'Fanta',        img:'img/fanta%20laranja%20600%20ml.png'},
+    // Refrigerantes — Lata 350ml
+    {id:25, name:'Coca-Cola',           vol:'Lata 350ml', price:3.50,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#6e0000,#B80000)', lbl:'Coca-Cola',    img:'img/coca%20cola%20lata.png'},
+    {id:26, name:'Guaraná Antarctica',  vol:'Lata 350ml', price:3.00,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#145414,#22902a)', lbl:'Guaraná',      img:'img/guarana%20lata%20350%20ml.webp'},
+    {id:27, name:'Pepsi Black',         vol:'Lata 350ml', price:3.50,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#08083a,#101080)', lbl:'Pepsi',        img:'img/pepsi%20lata%20350.webp'},
+    {id:28, name:'Fanta Laranja',       vol:'Lata 350ml', price:3.50,  cat:'refrigerantes',                   g:'linear-gradient(135deg,#A04800,#E06820)', lbl:'Fanta',        img:'img/fanta%20laranja%20lata.webp'},
+    // Energéticos
+    {id:11, name:'Red Bull',            vol:'250ml',      price:12.00, cat:'energeticos',                     g:'linear-gradient(135deg,#1a1a6e,#CC0000)',  lbl:'Red Bull',    img:'img/redbull.webp'},
+    {id:12, name:'Monster Energy',      vol:'473ml',      price:12.00, cat:'energeticos',                     g:'linear-gradient(135deg,#081808,#0a4a0a)',  lbl:'Monster',     img:'img/monster.webp'},
+    {id:13, name:'TNT Energy',          vol:'269ml',      price:6.00,  cat:'energeticos',                     g:'linear-gradient(135deg,#0E2040,#2d5090)',  lbl:'TNT',         img:'img/tnt%20energetico.webp'},
+    // Gelo
+    {id:14, name:'Gelo Triturado',      vol:'5kg',        price:6.00,  cat:'gelo',         pop:true,          g:'linear-gradient(135deg,#3a7abf,#a0ccf0)', lbl:'Gelo',        img:'img/gelo%205%20kg.jpg'},
+    {id:15, name:'Gelo em Cubo',        vol:'2kg',        price:4.00,  cat:'gelo',                            g:'linear-gradient(135deg,#4a90d4,#b8deff)', lbl:'Gelo',        img:'img/gelo%202%20kg.avif'},
+    // Snacks
+    {id:16, name:'Doritos Queijo Nacho',vol:'75g',        price:7.50,  cat:'snacks',       pop:true,          g:'linear-gradient(135deg,#7a2800,#C84000)',  lbl:'Doritos',   img:'img/doritos.webp'},
+    {id:17, name:'Ruffles Original',    vol:'68g',        price:5.00,  cat:'snacks',                          g:'linear-gradient(135deg,#7a5800,#C89000)',  lbl:'Ruffles',   img:'img/ruffles.webp'},
+    {id:18, name:'Amendoim Crocante',   vol:'150g',       price:6.00,  cat:'snacks',                          g:'linear-gradient(135deg,#5a3800,#9a6010)',  lbl:'Amendoim',  img:'img/amendoin.png'},
+    // Destilados — Whisky
+    {id:32, name:'Johnnie Walker Red Label', vol:'1L',    price:130.00, cat:'destilados', subcat:'whisky', pop:true, g:'linear-gradient(135deg,#3a2000,#9a5010)', lbl:'Red Label',    img:'img/redlabel%20whisky.webp'},
+    {id:33, name:'Ballantine\'s',            vol:'1L',    price:95.00,  cat:'destilados', subcat:'whisky',          g:'linear-gradient(135deg,#2a1800,#7a4000)', lbl:'Ballantine\'s', img:'img/ballantines%20whisky.jpg'},
+    {id:34, name:'White Horse',              vol:'1L',    price:80.00,  cat:'destilados', subcat:'whisky',          g:'linear-gradient(135deg,#3a3010,#8a7820)', lbl:'White Horse',   img:'img/white%20horse%2C%20whisky.jpg'},
+    {id:35, name:'Old Parr',                 vol:'1L',    price:210.00, cat:'destilados', subcat:'whisky',          g:'linear-gradient(135deg,#2a1000,#6a3800)', lbl:'Old Parr',      img:'img/oldpar%20whisky.webp'},
+    // Destilados — Vodka
+    {id:29, name:'Smirnoff',                 vol:'998ml', price:38.00,  cat:'destilados', subcat:'vodka',  pop:true, g:'linear-gradient(135deg,#1a3060,#4070b0)', lbl:'Smirnoff',     img:'img/smirnoff.jpg'},
+    {id:30, name:'Absolut Original',         vol:'1L',    price:65.00,  cat:'destilados', subcat:'vodka',           g:'linear-gradient(135deg,#2a4070,#5080c0)', lbl:'Absolut',      img:'img/absolut%20original.jpg'},
+    {id:31, name:'Ciroc',                    vol:'750ml', price:160.00, cat:'destilados', subcat:'vodka',           g:'linear-gradient(135deg,#1a2050,#3050a0)', lbl:'Ciroc',        img:'img/ciroc%20vodka.jpg'},
+    // Destilados — Tequila
+    {id:36, name:'Jose Cuervo Ouro',         vol:'750ml', price:80.00,  cat:'destilados', subcat:'tequila',         g:'linear-gradient(135deg,#2a5010,#7a8000)', lbl:'Cuervo'},
+    {id:37, name:'Patron Silver',            vol:'750ml', price:250.00, cat:'destilados', subcat:'tequila',         g:'linear-gradient(135deg,#205040,#508060)', lbl:'Patron'},
+    // Destilados — Gin
+    {id:38, name:'Tanqueray',                vol:'750ml', price:90.00,  cat:'destilados', subcat:'gin',             g:'linear-gradient(135deg,#0a3048,#206080)', lbl:'Tanqueray'},
+    {id:39, name:'Gordon\'s Gin',            vol:'980ml', price:55.00,  cat:'destilados', subcat:'gin',             g:'linear-gradient(135deg,#0a2838,#185068)', lbl:'Gordon\'s'},
+    // Promoções
+    {id:19, name:'Kit 12 Skol Lata',   vol:'350ml cada', price:39.90, cat:'promocoes',disc:18,               g:'linear-gradient(135deg,#0E2040,#C07808)', lbl:'Kit Skol'},
+    {id:20, name:'Kit Cerveja + Gelo', vol:'6 latas+2kg',price:28.00, cat:'promocoes',disc:15,               g:'linear-gradient(135deg,#0E2040,#E63329)', lbl:'Kit Beer'},
+  ];
+
+  const WPP='5544999735347', DELIVERY=5, MIN=20;
+  let cart={}, activeCat='populares';
+
+  function cartItems(){ return Object.keys(cart).map(id=>({...P.find(x=>x.id==id),qty:cart[id]})); }
+  function fmt(v){ return 'R$ '+v.toFixed(2).replace('.',','); }
+
+  /* ── PRODUCTS ── */
+  function renderCard(p){
+    const [i,d]=p.price.toFixed(2).split('.');
+    const old=p.disc?Math.round(p.price/(1-p.disc/100)):null;
+    const qty=cart[p.id]||0;
+    const isBeer=p.cat==='cervejas';
+    const ctrl=qty>0
+      ?`<div class="qty-ctrl">
+          <button onclick="changeCardQty(${p.id},-1)">−</button>
+          <span>${qty}</span>
+          <button onclick="changeCardQty(${p.id},1)">+</button>
+        </div>`
+      :`<button class="add-btn" onclick="addToCart(${p.id})">+</button>`;
+    const packs=isBeer
+      ?`<div class="pack-row">
+          <button class="pack-btn" onclick="addQty(${p.id},6)">Pack 6</button>
+          <button class="pack-btn" onclick="addQty(${p.id},12)">Pack 12</button>
+        </div>`
+      :'';
+    const imgArea=p.img
+      ?`<div class="card-img card-img-real" style="background:#f8f8f8">
+          ${p.disc?`<div class="disc-badge">-${p.disc}%</div>`:''}
+          <img src="${p.img}" alt="${p.name}" loading="lazy"
+            onerror="var e=this.parentNode;e.classList.remove('card-img-real');e.style.background='${p.g}';this.style.display='none'">
+          <span class="img-label">${p.lbl}</span>
+        </div>`
+      :`<div class="card-img" style="background:${p.g}">
+          ${p.disc?`<div class="disc-badge">-${p.disc}%</div>`:''}
+          <span class="img-label">${p.lbl}</span>
+        </div>`;
+    return`<div class="card">
+      ${imgArea}
+      <div class="card-body">
+        <div class="card-name">${p.name}</div>
+        <div class="card-vol">${p.vol}</div>
+        <div class="card-foot">
+          <div>
+            ${old?`<div class="price-old">R$ ${old},00</div>`:''}
+            <div class="price-main"><sup>R$</sup><b>${i}</b><small>,${d}</small></div>
+          </div>
+          ${ctrl}
+        </div>
+        ${packs}
+      </div>
+    </div>`;
+  }
+
+  function renderProducts(q=''){
+    const labels={populares:'Mais pedidos',cervejas:'Cervejas',refrigerantes:'Refrigerantes',energeticos:'Energéticos',gelo:'Gelo',snacks:'Snacks',destilados:'Destilados',promocoes:'Promoções'};
+    let list=q ? P.filter(p=>p.name.toLowerCase().includes(q.toLowerCase()))
+               : activeCat==='populares' ? P.filter(p=>p.pop) : P.filter(p=>p.cat===activeCat);
+    document.getElementById('secTitle').textContent=q?`"${q}"`:labels[activeCat];
+
+    if(activeCat==='destilados'&&!q){
+      const subcats=[
+        {key:'whisky',  label:'Whisky',  icon:'ti-glass-full'},
+        {key:'vodka',   label:'Vodka',   icon:'ti-bottle'},
+        {key:'tequila', label:'Tequila', icon:'ti-leaf'},
+        {key:'gin',     label:'Gin',     icon:'ti-plant'},
+      ];
+      let html='';
+      subcats.forEach(sc=>{
+        const items=list.filter(p=>p.subcat===sc.key);
+        if(!items.length) return;
+        html+=`<div class="subcat-header"><i class="ti ${sc.icon}"></i>${sc.label}</div>`;
+        html+=items.map(renderCard).join('');
+      });
+      document.getElementById('grid').innerHTML=html;
+      return;
+    }
+
+    document.getElementById('grid').innerHTML=list.map(renderCard).join('');
+  }
+  function setCat(el){
+    document.querySelectorAll('.cat-pill').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active'); activeCat=el.dataset.cat;
+    document.getElementById('searchInput').value=''; renderProducts();
+  }
+  function navToCat(cat){
+    activeCat=cat;
+    document.querySelectorAll('.cat-pill').forEach(b=>b.classList.toggle('active',b.dataset.cat===cat));
+    document.getElementById('searchInput').value='';
+    renderProducts();
+    document.querySelector('.prods-wrap').scrollIntoView({behavior:'smooth',block:'start'});
+    document.querySelectorAll('.nav-content.open').forEach(d=>d.classList.remove('open'));
+    document.querySelectorAll('[data-menu]').forEach(b=>b.setAttribute('aria-expanded','false'));
+  }
+  function onSearch(){ renderProducts(document.getElementById('searchInput').value.trim()); }
+
+  /* ── CART ── */
+  function addToCart(id){ cart[id]=(cart[id]||0)+1; updateCart(); if(window.innerWidth>=768) openCart(); }
+  function addQty(id,qty){ cart[id]=(cart[id]||0)+qty; updateCart(); if(window.innerWidth>=768) openCart(); }
+  function changeQty(id,d){ cart[id]=(cart[id]||0)+d; if(cart[id]<=0) delete cart[id]; updateCart(); }
+  function changeCardQty(id,d){ cart[id]=(cart[id]||0)+d; if(cart[id]<=0) delete cart[id]; updateCart(); }
+  function removeItem(id){ delete cart[id]; updateCart(); }
+
+  function updateCart(){
+    const items=cartItems();
+    const count=items.reduce((s,i)=>s+i.qty,0);
+    const sub=items.reduce((s,i)=>s+i.price*i.qty,0);
+    const total=sub+DELIVERY;
+    const badge=document.getElementById('cartBadge');
+    badge.textContent=count; count>0?badge.classList.add('on'):badge.classList.remove('on');
+    const fab=document.getElementById('fabBadge');
+    fab.textContent=count; count>0?fab.classList.add('on'):fab.classList.remove('on');
+    renderDrawer();
+    renderProducts();
+  }
+
+  function renderDrawer(){
+    const items=cartItems(), body=document.getElementById('drawerBody'), foot=document.getElementById('drawerFoot');
+    if(!items.length){
+      body.innerHTML=`<div class="empty-cart"><i class="ti ti-shopping-bag"></i><p>Sacola vazia</p><span>Adicione produtos para continuar</span></div>`;
+      foot.style.display='none'; return;
+    }
+    body.innerHTML=items.map(i=>`<div class="ci">
+      <div class="ci-img" style="background:${i.g}"><span>${i.lbl}</span></div>
+      <div class="ci-body">
+        <div class="ci-name">${i.name}</div><div class="ci-vol">${i.vol}</div>
+        <div class="qty-row">
+          <button class="qb" onclick="changeQty(${i.id},-1)">−</button>
+          <span class="qty-val">${i.qty}</span>
+          <button class="qb" onclick="changeQty(${i.id},1)">+</button>
+        </div>
+      </div>
+      <div class="ci-right">
+        <span class="ci-price">${fmt(i.price*i.qty)}</span>
+        <button class="ci-del" onclick="removeItem(${i.id})"><i class="ti ti-trash"></i></button>
+      </div>
+    </div>`).join('');
+    const sub=items.reduce((s,i)=>s+i.price*i.qty,0);
+    document.getElementById('dSubtotal').textContent=fmt(sub);
+    document.getElementById('dTotal').textContent=fmt(sub+DELIVERY);
+    document.getElementById('minWarn').style.display=sub<MIN?'flex':'none';
+    foot.style.display='block';
+  }
+
+  function openCart(){ document.getElementById('drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); document.body.style.overflow='hidden'; renderDrawer(); }
+  function closeCart(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); document.body.style.overflow=''; }
+
+  /* ── MOBILE NAV ── */
+  function toggleMob(){
+    const nav=document.getElementById('mobNav'), ico=document.getElementById('burgerIcon');
+    nav.classList.toggle('open'); ico.className=nav.classList.contains('open')?'ti ti-x':'ti ti-menu-2';
+    document.body.style.overflow=nav.classList.contains('open')?'hidden':'';
+  }
+  function closeMob(){ document.getElementById('mobNav').classList.remove('open'); document.getElementById('burgerIcon').className='ti ti-menu-2'; document.body.style.overflow=''; }
+
+  /* ── CHECKOUT ── */
+  function openCheckout(){ if(!cartItems().length) return; closeCart(); document.getElementById('checkoutModal').classList.add('open'); document.body.style.overflow='hidden'; document.getElementById('addrRow').style.display='block'; document.getElementById('fAddr').required=true; }
+  function closeCheckout(){ document.getElementById('checkoutModal').classList.remove('open'); document.body.style.overflow=''; openCart(); }
+  function toggleTipo(){
+    const t=document.querySelector('input[name="tipo"]:checked').value;
+    document.getElementById('addrRow').style.display=t==='delivery'?'block':'none';
+    document.getElementById('fAddr').required=t==='delivery';
+    document.getElementById('rbD').classList.toggle('sel',t==='delivery');
+    document.getElementById('rbR').classList.toggle('sel',t==='retirada');
+  }
+  function toggleTroco(){ document.getElementById('trocoRow').style.display=document.getElementById('fPag').value==='Dinheiro'?'block':'none'; }
+
+  function sendOrder(e){
+    e.preventDefault();
+    const tipo=document.querySelector('input[name="tipo"]:checked').value;
+    const nome=document.getElementById('fNome').value.trim();
+    const tel=document.getElementById('fTel').value.trim();
+    const addr=document.getElementById('fAddr').value.trim();
+    const pag=document.getElementById('fPag').value;
+    const troco=document.getElementById('fTroco').value.trim();
+    const obs=document.getElementById('fObs').value.trim();
+    const items=cartItems();
+    const sub=items.reduce((s,i)=>s+i.price*i.qty,0), total=sub+DELIVERY;
+    const pagStr = pag==='Dinheiro'&&troco ? `${pag} (troco para ${troco})` : pag;
+    const endStr  = tipo==='delivery' ? addr : 'Retirada no balcão';
+    let msg = `Novo Pedido - Gordinho's Beer`;
+    msg += `\nCliente: ${nome}`;
+    msg += `\nTelefone de contato: ${tel}`;
+    msg += `\nEndereço de entrega: ${endStr}`;
+    msg += `\nForma de Pagamento: ${pagStr}`;
+    msg += `\n\nDescrição do Pedido:`;
+    items.forEach(i => { msg += `\n- ${i.qty}x ${i.name} ${i.vol} - ${fmt(i.price*i.qty)}`; });
+    msg += `\n\nSubtotal: ${fmt(sub)}`;
+    msg += `\nEntrega: ${fmt(DELIVERY)}`;
+    msg += `\nTotal: ${fmt(total)}`;
+    if(obs) msg += `\n\nObservações: ${obs}`;
+
+    // Limpar carrinho e fechar modal
+    cart={}; updateCart();
+    document.getElementById('checkoutForm').reset();
+    document.getElementById('trocoRow').style.display='none';
+    document.getElementById('addrRow').style.display='block';
+    document.getElementById('rbD').classList.add('sel'); document.getElementById('rbR').classList.remove('sel');
+    document.getElementById('checkoutModal').classList.remove('open');
+    document.body.style.overflow='';
+
+    const enc = encodeURIComponent(msg);
+    if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      // Mobile: abre WhatsApp direto via URI nativo (sem share sheet, sem redirect)
+      window.location.href = 'whatsapp://send?phone=' + WPP + '&text=' + enc;
+    } else {
+      // Desktop: abre WhatsApp Web direto no chat do número
+      window.open('https://web.whatsapp.com/send?phone=' + WPP + '&text=' + enc, '_blank');
+    }
+  }
+
+  renderProducts();
+
+  /* ── Scroll: esconde nav+logo ao scrollar pra baixo, mostra ao subir ── */
+  (function() {
+    const hdr  = document.querySelector('.hdr');
+    const logo = document.querySelector('.logo-float');
+    let lastY  = 0;
+    let ticking = false;
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(function() {
+          const y = window.scrollY;
+          if (y <= 10) {
+            hdr.classList.remove('nav-hidden');
+            logo.classList.remove('nav-hidden');
+          } else if (y > lastY + 4) {
+            hdr.classList.add('nav-hidden');
+            logo.classList.add('nav-hidden');
+          } else if (y < lastY - 4) {
+            hdr.classList.remove('nav-hidden');
+            logo.classList.remove('nav-hidden');
+          }
+          lastY = y;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
+
+  // Animated tabs nav
+  (function() {
+    const nav    = document.getElementById('hdrNav');
+    const line   = document.getElementById('navLine');
+    const hovBg  = document.getElementById('navHoverBg');
+    const tabs   = document.querySelectorAll('[data-nav-tab]');
+    let activeTab = tabs[0];
+
+    function posOf(el) {
+      const navR = nav.getBoundingClientRect();
+      const elR  = el.getBoundingClientRect();
+      return { left: elR.left - navR.left, width: elR.width, top: elR.top - navR.top, height: elR.height };
+    }
+
+    function moveLine(el) {
+      const p = posOf(el);
+      line.style.left  = p.left + 'px';
+      line.style.width = p.width + 'px';
+    }
+
+    function showBg(el) {
+      const p = posOf(el);
+      hovBg.style.left   = p.left + 'px';
+      hovBg.style.width  = p.width + 'px';
+      hovBg.style.top    = p.top + 'px';
+      hovBg.style.height = p.height + 'px';
+      hovBg.style.opacity = '1';
+    }
+
+    tabs.forEach(function(tab) {
+      tab.addEventListener('mouseenter', function() {
+        moveLine(tab);
+        showBg(tab);
+      });
+      tab.addEventListener('mouseleave', function() {
+        moveLine(activeTab);
+        hovBg.style.opacity = '0';
+      });
+      tab.addEventListener('click', function() {
+        tabs.forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        activeTab = tab;
+        moveLine(tab);
+      });
+    });
+
+    // Init after layout is painted
+    requestAnimationFrame(function() { if (activeTab) moveLine(activeTab); });
+    window.addEventListener('resize', function() { if (activeTab) moveLine(activeTab); });
+  })();
+
+  // Dropdown menus
+  (function() {
+    const triggers = document.querySelectorAll('.nav-trigger[data-menu]');
+
+    function closeAll() {
+      triggers.forEach(function(t) {
+        const id = t.getAttribute('data-menu');
+        const content = document.getElementById(id);
+        if (content) content.classList.remove('open');
+        t.setAttribute('aria-expanded', 'false');
+      });
+    }
+
+    triggers.forEach(function(trigger) {
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const id = trigger.getAttribute('data-menu');
+        const content = document.getElementById(id);
+        const isOpen = content.classList.contains('open');
+        closeAll();
+        if (!isOpen) {
+          content.classList.add('open');
+          trigger.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    document.addEventListener('click', closeAll);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAll();
+    });
+  })();
+</script>
+</body>
+</html>
+
