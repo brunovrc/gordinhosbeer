@@ -15,7 +15,8 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     img { display: block; max-width: 100%; }
     a { text-decoration: none; color: inherit; }
-    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; touch-action: manipulation; }
+    a { touch-action: manipulation; }
     input, select, textarea { font-family: inherit; }
 
     :root {
@@ -367,7 +368,7 @@
       .hero-h1 { font-size: 70px; }
     }
 
-    /* Mobile: esconde a imagem panorâmica, usa bg amarelo + balde flutuante */
+    /* Mobile: bg amarelo, layout em coluna, balde embaixo dos badges */
     @media (max-width: 767px) {
       .hdr-in {
         display: flex;
@@ -380,26 +381,22 @@
       .hero {
         background: var(--yellow);
         line-height: normal;
-        position: relative;
         overflow: hidden;
-        min-height: 340px;
       }
       .hero-bg-img { display: none; }
       .hero-over {
         position: relative;
-        z-index: 2;
-        padding: 28px 22px 160px 22px;
+        padding: 22px 20px 14px;
       }
+      .hero-h1 { font-size: 34px; line-height: 1.1; }
+      .hero-info { flex-direction: column; gap: 8px; }
+      .hi-badge { padding: 12px 16px; }
       .hero-bucket-mobile {
         display: block;
-        position: absolute;
-        bottom: -16px;
-        right: -16px;
-        width: 62%;
-        max-width: 280px;
+        width: 76%;
+        max-width: 300px;
+        margin: 0 auto;
         mix-blend-mode: multiply;
-        z-index: 1;
-        pointer-events: none;
       }
     }
 
@@ -909,11 +906,14 @@
 
 <!-- Mobile nav -->
 <nav class="mob-nav" id="mobNav">
-  <a href="#" onclick="closeMob()">Início <i class="ti ti-chevron-right"></i></a>
-  <a href="#" onclick="closeMob()">Produtos <i class="ti ti-chevron-right"></i></a>
-  <a href="#" onclick="closeMob()">Promoções <i class="ti ti-chevron-right"></i></a>
-  <a href="#" onclick="closeMob()">Como funciona <i class="ti ti-chevron-right"></i></a>
-  <a href="#" onclick="closeMob()">Sobre nós <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});closeMob();return false">Início <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('cervejas');return false">Cervejas <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('refrigerantes');return false">Refrigerantes <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('energeticos');return false">Energéticos <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('destilados');return false">Destilados <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('snacks');return false">Snacks <i class="ti ti-chevron-right"></i></a>
+  <a href="#" onclick="navToCat('promocoes');return false">Promoções <i class="ti ti-chevron-right"></i></a>
+  <a href="#sobre" onclick="closeMob()">Sobre nós <i class="ti ti-chevron-right"></i></a>
   <a href="https://wa.me/5544999735347" target="_blank">WhatsApp <i class="ti ti-brand-whatsapp"></i></a>
 </nav>
 
@@ -1332,7 +1332,7 @@
   ];
 
   const WPP='5544999735347', DELIVERY=5, MIN=20;
-  let cart={}, activeCat='populares';
+  let cart=(()=>{try{return JSON.parse(localStorage.getItem('gb_cart'))||{};}catch(e){return {};}})(), activeCat='populares';
 
   function cartItems(){ return Object.keys(cart).map(id=>({...P.find(x=>x.id==id),qty:cart[id]})); }
   function fmt(v){ return 'R$ '+v.toFixed(2).replace('.',','); }
@@ -1423,6 +1423,7 @@
     document.querySelector('.prods-wrap').scrollIntoView({behavior:'smooth',block:'start'});
     document.querySelectorAll('.nav-content.open').forEach(d=>d.classList.remove('open'));
     document.querySelectorAll('[data-menu]').forEach(b=>b.setAttribute('aria-expanded','false'));
+    closeMob();
   }
   function onSearch(){ renderProducts(document.getElementById('searchInput').value.trim()); }
 
@@ -1442,6 +1443,7 @@
     badge.textContent=count; count>0?badge.classList.add('on'):badge.classList.remove('on');
     const fab=document.getElementById('fabBadge');
     fab.textContent=count; count>0?fab.classList.add('on'):fab.classList.remove('on');
+    localStorage.setItem('gb_cart', JSON.stringify(cart));
     renderDrawer();
     renderProducts();
   }
@@ -1549,6 +1551,13 @@
   }
 
   renderProducts();
+  updateCart();
+
+  /* Ao carregar/recarregar, scroll direto para o cardápio */
+  window.addEventListener('load', ()=>{
+    const pw = document.querySelector('.prods-wrap');
+    if(pw) window.scrollTo({top: pw.offsetTop, behavior: 'smooth'});
+  });
 
   /* ── Scroll: esconde nav+logo ao scrollar pra baixo, mostra ao subir ── */
   (function() {
