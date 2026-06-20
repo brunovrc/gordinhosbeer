@@ -692,7 +692,7 @@
     ══════════════════════════════ */
     .overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,.5);
-      z-index: 200; opacity: 0; pointer-events: none; transition: opacity .25s;
+      z-index: 550; opacity: 0; pointer-events: none; transition: opacity .25s;
     }
     .overlay.open { opacity: 1; pointer-events: auto; }
 
@@ -702,7 +702,7 @@
     .drawer {
       position: fixed; top: 0; right: 0; bottom: 0;
       width: 100%; max-width: 420px;
-      background: white; z-index: 201;
+      background: white; z-index: 560;
       display: flex; flex-direction: column;
       transform: translateX(100%); transition: transform .28s ease;
       box-shadow: -4px 0 32px rgba(0,0,0,.15);
