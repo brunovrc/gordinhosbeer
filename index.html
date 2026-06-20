@@ -59,9 +59,13 @@
       opacity: 0;
       pointer-events: none;
     }
+    .logo-float.mob-open {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
     .logo-float a { display: block; line-height: 0; }
     .logo-float img {
-      /* Dimensões explícitas para evitar distorção do SVG */
       height: 196px;
       width:  196px;
       display: block;
@@ -69,6 +73,11 @@
       filter: drop-shadow(0 4px 16px rgba(0,0,0,.35));
     }
     .logo-float img:hover { transform: scale(1.05); }
+
+    @media (max-width: 767px) {
+      .logo-float { top: 4px; left: 12px; }
+      .logo-float img { height: 72px; width: 72px; }
+    }
 
     /* ══════════════════════════════
        HEADER
@@ -358,32 +367,39 @@
       .hero-h1 { font-size: 70px; }
     }
 
-    /* Mobile: esconde a imagem panorâmica, usa bg amarelo + balde separado */
+    /* Mobile: esconde a imagem panorâmica, usa bg amarelo + balde flutuante */
     @media (max-width: 767px) {
       .hdr-in {
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        padding-left: 216px;
+        padding-left: 92px;
         padding-right: 16px;
       }
       .hdr-logo-gap { display: none; }
       .hero {
         background: var(--yellow);
         line-height: normal;
+        position: relative;
+        overflow: hidden;
+        min-height: 340px;
       }
       .hero-bg-img { display: none; }
       .hero-over {
         position: relative;
-        padding: 108px 22px 16px;
+        z-index: 2;
+        padding: 28px 22px 160px 22px;
       }
       .hero-bucket-mobile {
         display: block;
-        width: 88%;
-        max-width: 340px;
-        margin: 0 auto 24px;
-        position: relative;
-        z-index: 2;
+        position: absolute;
+        bottom: -16px;
+        right: -16px;
+        width: 62%;
+        max-width: 280px;
+        mix-blend-mode: multiply;
+        z-index: 1;
+        pointer-events: none;
       }
     }
 
@@ -884,8 +900,8 @@
 </head>
 <body>
 
-<!-- Logo flutuante: atravessa nav + hero, border-radius:50% elimina fundo branco do PNG -->
-<div class="logo-float">
+<!-- Logo flutuante: atravessa nav + hero -->
+<div class="logo-float" id="logoFloat">
   <a href="#">
     <img src="img/logotipo svg sem fundo.svg" alt="Gordinho's Beer">
   </a>
@@ -1464,10 +1480,17 @@
   /* ── MOBILE NAV ── */
   function toggleMob(){
     const nav=document.getElementById('mobNav'), ico=document.getElementById('burgerIcon');
+    const logo=document.getElementById('logoFloat');
     nav.classList.toggle('open'); ico.className=nav.classList.contains('open')?'ti ti-x':'ti ti-menu-2';
+    logo.classList.toggle('mob-open', nav.classList.contains('open'));
     document.body.style.overflow=nav.classList.contains('open')?'hidden':'';
   }
-  function closeMob(){ document.getElementById('mobNav').classList.remove('open'); document.getElementById('burgerIcon').className='ti ti-menu-2'; document.body.style.overflow=''; }
+  function closeMob(){
+    document.getElementById('mobNav').classList.remove('open');
+    document.getElementById('burgerIcon').className='ti ti-menu-2';
+    document.getElementById('logoFloat').classList.remove('mob-open');
+    document.body.style.overflow='';
+  }
 
   /* ── CHECKOUT ── */
   function openCheckout(){ if(!cartItems().length) return; closeCart(); document.getElementById('checkoutModal').classList.add('open'); document.body.style.overflow='hidden'; document.getElementById('addrRow').style.display='block'; document.getElementById('fAddr').required=true; }
