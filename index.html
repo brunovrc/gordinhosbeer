@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Gordinho's Beer — Disk Cerveja, Conveniência & Tabacaria em Maringá. Peça pelo site, receba em até 45 minutos.">
   <title>Gordinho's Beer — Disk Cerveja & Tabacaria</title>
-  <link rel="icon" type="image/png" href="Logotipos e Favicon/Favicon.png">
+  <link rel="icon" type="image/svg+xml" href="img/favicon-beer.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -1564,28 +1564,6 @@
     if(pw) window.scrollTo({top: pw.offsetTop, behavior: 'smooth'});
   });
 
-  /* Favicon: remove fundo branco via canvas */
-  (function(){
-    const img = new Image();
-    img.onload = function(){
-      const sz = 64;
-      const c = document.createElement('canvas');
-      c.width = c.height = sz;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(img, 0, 0, sz, sz);
-      const id = ctx.getImageData(0, 0, sz, sz);
-      const d = id.data;
-      for(let i = 0; i < d.length; i += 4){
-        if(d[i] > 220 && d[i+1] > 220 && d[i+2] > 220) d[i+3] = 0;
-      }
-      ctx.putImageData(id, 0, 0);
-      let lnk = document.querySelector('link[rel="icon"]');
-      if(!lnk){ lnk = document.createElement('link'); lnk.rel = 'icon'; document.head.appendChild(lnk); }
-      lnk.type = 'image/png';
-      lnk.href = c.toDataURL('image/png');
-    };
-    img.src = 'Logotipos e Favicon/Favicon.png';
-  })();
 
   /* ── Scroll: esconde nav+logo ao scrollar pra baixo, mostra ao subir ── */
   (function() {
