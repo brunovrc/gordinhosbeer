@@ -382,7 +382,7 @@
       .hero {
         background: var(--yellow);
         line-height: normal;
-        overflow: hidden;
+        overflow: visible;
       }
       .hero-bg-img { display: none; }
       .hero-over {
@@ -395,11 +395,13 @@
       .hero-bucket-wrap {
         display: flex;
         justify-content: center;
+        overflow: visible;
+        padding: 0 4px;
       }
       .hero-bucket-mobile {
         display: block;
-        width: 65%;
-        max-width: 260px;
+        width: 100%;
+        max-width: 380px;
       }
     }
 
